@@ -1,16 +1,18 @@
 import { FcGoogle } from "react-icons/fc";
-// import { FaGithub } from "react-icons/fa";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../Provider/AuthProvider/AuthProvider";
-import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
+import { GithubAuthProvider, GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import app from "../Firebase/Firebase.config";
 import { Link, useNavigate } from "react-router-dom";
-// GithubAuthProvider
+import { FaEye, FaGithub } from "react-icons/fa";
+import toast from "react-hot-toast";
+
 
 
 const LogIn = () => {
     const {signIn ,setUser } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [showPassword , setShowPassword] = useState(false);
 
     const handleLogin = e =>{
         e.preventDefault();
@@ -22,33 +24,44 @@ const LogIn = () => {
         .then(result =>{
             const user = result.user;
             setUser(user);
-            navigate('/home');
+            navigate('/');
+            e.target.reset();
+            toast.success('Successfully created!');
         })
-        .catch(error => console.error(error));
+        .catch(error => {
+            console.error(error);
+            toast.error(error.message);
+        });
     };
 
     const provider = new GoogleAuthProvider();
-    // const providerg = new GithubAuthProvider();
+    const providerg = new GithubAuthProvider();
     const auth = getAuth(app)
 
     const handelGoogleSignIn = () =>{
         signInWithPopup(auth , provider)
         .then(result =>{
-            console.log(result.user);
+            setUser(result.user);
+            navigate('/');
+            toast.success('Successfully created!');
         })
         .catch(error =>{
             console.error(error);
+            toast.error(error.message);
         })
     }
-    // const handelGithubSignIn = () =>{
-    //     signInWithPopup(auth ,providerg)
-    //     .then( result =>{
-    //         setUser(result.user)
-    //     })
-    //     .catch(error =>{
-    //         console.error(error);
-    //     })
-    // }
+    const handelGithubSignIn = () =>{
+        signInWithPopup(auth ,providerg)
+        .then( result =>{
+            setUser(result.user);
+            navigate('/');
+            toast.success('Successfully created!');
+        })
+        .catch(error =>{
+            console.error(error);
+            toast.error(error.message);
+        })
+    }
 
 
     return (
@@ -62,10 +75,18 @@ const LogIn = () => {
                     <input type="email" name="email" placeholder="email" className="input input-bordered" required />
                     </div>
                     <div className="form-control">
-                    <label className="label">
-                        <span className="label-text">Password</span>
-                    </label>
-                    <input type="password" name="password" placeholder="password" className="input input-bordered" required />
+                    <div className="relative">
+                        <label className="label">
+                            <span className="label-text">Password</span>
+                        </label>
+                        <input 
+                        type={showPassword ? 'text' : 'password'}
+                        name="password" 
+                        placeholder="password" 
+                        className="input input-bordered w-full" 
+                        required />
+                        <span className="absolute   bottom-4 right-5" onClick={()=> setShowPassword(!showPassword)}><FaEye /></span>
+                    </div>
                     <label className="label">
                         <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
                     </label>
@@ -80,7 +101,7 @@ const LogIn = () => {
                 </div>
                 <div className="flex flex-col justify-center items-center md:pb-6">
                     <button onClick={handelGoogleSignIn} className="btn bg-white md:w-7/12 ">{<FcGoogle className="text-3xl"/>} Google</button>
-                    {/* <button onClick={handelGithubSignIn} className="btn bg-white mt-2 md:w-7/12">{<FaGithub className="text-3xl"/>} GitHub</button> */}
+                    <button onClick={handelGithubSignIn} className="btn bg-white mt-2 md:w-7/12">{<FaGithub className="text-3xl"/>} GitHub</button>
                 </div>
             </div>
         </div>

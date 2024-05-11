@@ -1,10 +1,12 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../Provider/AuthProvider/AuthProvider";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 
 const Register = () => {
-    const {createUser } = useContext(AuthContext);
+    const {createUser ,setUser} = useContext(AuthContext);
+    const [showPassword , setShowPassword] = useState(false);
 
     const handelRegister = (e) =>{
         e.preventDefault();
@@ -19,11 +21,13 @@ const Register = () => {
         // create user 
         createUser(email,password)
         .then(result =>{
-            console.log(result.user)
-            Swal.fire("SweetAlert2 is working!");
+            // console.log(result.user)
+            Swal.fire("Successfully log in");
+            setUser(result.user);
         })
         .catch(error =>{
-            console.error(error);
+            // console.error(error);
+            toast.error(error.message);
         })
 
     };
@@ -51,10 +55,15 @@ const Register = () => {
                 <input type="text" name="picture" placeholder="Picture" className="input input-bordered" required />
                 </div>
                 <div className="form-control">
-                <label className="label">
-                    <span className="label-text">Password</span>
-                </label>
-                <input type="password" name="password" placeholder="password" className="input input-bordered" required />
+                <div>
+                    <label className="label">
+                        <span className="label-text">Password</span>
+                    </label>
+                    <input type={showPassword ? 'text' : 'password'} name="password" placeholder="password" className="input input-bordered w-8/12 md:w-10/12" required />
+                    <button onClick={()=>setShowPassword(!showPassword)} className="btn bg-white mx-2">
+                        {showPassword? 'Hide' : 'Show'}
+                    </button>
+                </div>
                 <label className="label">
                     <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
                 </label>

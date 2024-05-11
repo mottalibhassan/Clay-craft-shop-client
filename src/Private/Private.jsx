@@ -8,7 +8,7 @@ const Private = ({children}) => {
     const {user,loading} = useContext(AuthContext);
 
     if(loading){
-        return <span className="loading loading-ring loading-lg"></span>;
+        return <div className="min-h-screen flex justify-center items-center"><span className="loading loading-ring loading-lg"></span></div>;
     }
 
     if(user){
